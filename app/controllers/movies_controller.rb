@@ -23,7 +23,8 @@ class MoviesController < ApplicationController
       flash[:notice] = "#{@movie.title} was successfully created."
       redirect_to movies_path
     else
-      render :new
+      flash[:notice] = "#{@movie.title} could not be created."
+      redirect_to movies_path
     end
   end
 
