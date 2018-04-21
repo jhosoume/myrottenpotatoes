@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
-    @selected_ratings = params[:ratings]
+    @selected_ratings = params[:ratings] || session[:ratings]
     @movies = 
       if ((not @selected_ratings) || @selected_ratings.keys.include?("all"))
         Movie.all
@@ -12,9 +12,20 @@ class MoviesController < ApplicationController
     @movies, @target = 
       if params[:sort_by]
         [@movies.order(params[:sort_by]), params[:field_id]]
+      elsif session[:sort_by]
+        [@movies.order(session[:sort_by]), session[:field_id]]
       else 
         [@movies.all, nil]
       end
+
+    if (params[:field_id] != session[:field_id]) || (params[:sort_by] != session[:sort_by])
+      session[:sort_by], session[:field_id] = params[:sort_by], params[:field_id]
+    end
+
+    if (params[:ratings] != session[:ratings])
+      session[:ratings] = @selected_ratings
+    end
+
   end
 
   def show
