@@ -1,6 +1,11 @@
 class MoviesController < ApplicationController
   def index
-    @movies = Movie.all
+    @movies, @target = 
+      if params[:sort_by]
+        [Movie.order(params[:sort_by]), params[:field_id]]
+      else 
+        [Movie.all, nil]
+      end
   end
 
   def show
@@ -37,7 +42,7 @@ class MoviesController < ApplicationController
   def destroy
     @movie = Movie.find params[:id]
     @movie.destroy
-    flash[:notice] = "Movie '#{@movie.title}' deleted"
+    flash[:notice] = "Movie '#{@movie.title}' was deleted"
     redirect_to movies_path
   end
 
