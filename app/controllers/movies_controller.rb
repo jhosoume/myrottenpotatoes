@@ -1,10 +1,19 @@
 class MoviesController < ApplicationController
   def index
+    @all_ratings = Movie.all_ratings
+    @selected_ratings = params[:ratings]
+    @movies = 
+      if ((not @selected_ratings) || @selected_ratings.keys.include?("all"))
+        Movie.all
+      else
+        Movie.where rating: @selected_ratings.keys
+      end
+    @selected_ratings ||= ["all"]
     @movies, @target = 
       if params[:sort_by]
-        [Movie.order(params[:sort_by]), params[:field_id]]
+        [@movies.order(params[:sort_by]), params[:field_id]]
       else 
-        [Movie.all, nil]
+        [@movies.all, nil]
       end
   end
 
